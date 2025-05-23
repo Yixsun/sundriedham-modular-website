@@ -186,7 +186,7 @@ export const ColorModeContext = createContext({
 });
 
 export function useMode() {
-  const [mode, setMode] = useState("dark");
+  const [mode, setMode] = useState("light");
 
   function toggleColorMode() {
     setMode((prev) => (prev === "light" ? "dark" : "light"));
