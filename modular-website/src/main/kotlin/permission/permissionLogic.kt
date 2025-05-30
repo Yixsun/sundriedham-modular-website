@@ -4,10 +4,10 @@ import java.util.Date
 /*
 Business logic
 ROlE:
- Admin,
- Executive
- Member -- all authenticated user (account valid)
- Visitor -- authenticated user (expired valid) or unauthenticated user
+ Admin, #1000
+ Executive  #0100
+ Member -- all authenticated user (account valid) #0010
+ Visitor -- authenticated user (expired valid) or unauthenticated user #0001
 
 Actions:
 trip register(form)

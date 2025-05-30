@@ -1,5 +1,7 @@
 package com.sundriedham.authentication
 
+import authentication.data.user.Identifier
+import authentication.data.user.User
 import authentication.data.user.UserRepository
 import authentication.service.hash.HashService
 import authentication.router.AuthenticationRouter
@@ -17,6 +19,8 @@ import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.utils.io.*
+import java.util.*
 
 fun Routing.configureAuthRoutes(
     tokenService: TokenService,
@@ -81,6 +85,29 @@ fun Routing.configureAuthRoutes(
         }
 
         authenticate("auth-jwt") {
+//            get("/example/with-permission") {
+//                val userID: Identifier<User>? = call.principal<JWTPrincipal>()
+//                    ?.get("userID")
+//                    ?.let(UUID::fromString)
+//                    ?.let(::Identifier)
+//                if (userID == null) {
+//                    call.respond("Failed")
+//                    return@get
+//                }
+//                val user = userRepository.getUserByUserid(userID)
+//                if (user?.username == "permission") {
+//                    // Do route
+//                } else {
+//                    // Respond with 403
+//                }
+//            }
+
+            get(path = "/example/with-permission-simple", permission = "create", userRepository) { user ->
+
+            }
+        }
+
+        authenticate("auth-jwt") {
             get("/check") {
                 val principal = call.principal<JWTPrincipal>()
                 val username = principal!!.payload.getClaim("username").asString()
@@ -91,3 +118,28 @@ fun Routing.configureAuthRoutes(
     }
 }
 
+suspend fun RoutingCall.getUser(userRepository: UserRepository): User? {
+    val userID: Identifier<User>? = principal<JWTPrincipal>()
+        ?.get("userID")
+        ?.let(UUID::fromString)
+        ?.let(::Identifier)
+    if (userID == null) { return null }
+    return userRepository.getUserByUserid(userID)
+}
+
+@KtorDsl
+fun Route.get(path: String, permission: String, userRepository: UserRepository, body: suspend RoutingContext.(User) -> Unit) {
+    get(path = path) {
+        val user = call.getUser(userRepository)
+        if (user == null) {
+            call.respond("Failed")
+            return@get
+        }
+        if (user?.username == permission) {
+            body(user)
+        } else {
+            call.respond(HttpStatusCode.Unauthorized)
+            return@get
+        }
+    }
+}

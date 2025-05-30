@@ -1,0 +1,7 @@
+CREATE TABLE usertable(
+	id UUID PRIMARY KEY NOT NULL, 
+	username VARCHAR(64) NOT NULL UNIQUE, 
+	password VARCHAR(64) NOT NULL, 
+	salt VARCHAR(64) NOT NULL
+);
+
