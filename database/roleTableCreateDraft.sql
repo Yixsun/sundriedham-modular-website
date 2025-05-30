@@ -1,0 +1,20 @@
+CREATE TABLE roles(
+	id UUID PRIMARY KEY NOT NULL, 
+	role BYTEA NOT NULL DEFAULT E'\\x0001',
+	CONSTRAINT fk_name FOREIGN KEY(id) REFERENCES usertable(id)
+)
+
+SELECT * FROM roles
+
+INSERT INTO roles (id, role)
+VALUES ('85cf29d9-52cb-4848-ba10-95c798118c9d', E'\\x0002');
+
+
+
+ALTER TABLE roles 
+ADD CONSTRAINT fk_name 
+FOREIGN KEY(id) 
+REFERENCES usertable(id)
+ON DELETE CASCADE;
+
+DELETE FROM roles

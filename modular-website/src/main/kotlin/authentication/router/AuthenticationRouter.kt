@@ -10,6 +10,7 @@ import authentication.service.token.TokenService
 import authentication.domain.AuthenticationResponse
 import authentication.domain.LoginCredentialsRequest
 import authentication.domain.RefreshAuthenticationRequest
+import com.sundriedham.permission.Role
 import com.sundriedham.utils.networking.NetworkResult
 import org.apache.commons.codec.digest.DigestUtils
 import java.util.*
@@ -36,6 +37,7 @@ class AuthenticationRouter(
     private val hashService: HashService,
     private val tokenService: TokenService
 ) {
+    //Sign up
     suspend fun authenticateSignup(request: LoginCredentialsRequest): NetworkResult<Unit, AuthenticateSignInError> {
         //check valid username and password
         if (request.username.isBlank()
@@ -49,6 +51,7 @@ class AuthenticationRouter(
             username = request.username,
             password = hashedPassword.hash,
             salt = hashedPassword.salt,
+            roles = setOf(Role.MEMBER),
             userid = Identifier(UUID.randomUUID())
         )
         //Insert to db
@@ -63,7 +66,7 @@ class AuthenticationRouter(
                 NetworkResult.Failure(AuthenticateSignInError.UnknownError)
         }
     }
-
+    //Log in
     suspend fun authenticate(request: LoginCredentialsRequest): NetworkResult<AuthenticationResponse, AuthenticationRequestError> {
         //read user from db
         val user = userRepository.getUserByUserName(request.username)
@@ -83,7 +86,7 @@ class AuthenticationRouter(
         //generate token response
         return NetworkResult.Success(createAuthenticationResponse(user))
     }
-
+    //Refresh Token
     suspend fun authenticateRefresh(request: RefreshAuthenticationRequest): NetworkResult<AuthenticationResponse, AuthenticationRefreshError> {
         val token = request.refreshToken
         if (!tokenService.verifyRefreshToken(token)) {

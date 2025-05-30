@@ -4,7 +4,6 @@ import authentication.data.user.DefaultUserRepository
 import authentication.service.hash.DefaultHashService
 import authentication.service.token.DefaultTokenService
 import authentication.service.token.TokenConfig
-import com.sundriedham.permission.configureRole
 import plugins.configureDatabases
 import plugins.configureSecurity
 import plugins.configureRouting
@@ -34,6 +33,5 @@ fun Application.module() {
     configureSecurity(tokenService, userRepository, hashingService)
     configureRouting()
     configureSerialization()
-    configureRole()
 
 }

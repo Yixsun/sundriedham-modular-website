@@ -4,10 +4,10 @@ import java.util.Date
 /*
 Business logic
 ROlE:
- Admin, #1000
- Executive  #0100
- Member -- all authenticated user (account valid) #0010
- Visitor -- authenticated user (expired valid) or unauthenticated user #0001
+ Admin,
+ Executive
+ Member -- all authenticated user (account valid)
+ Visitor -- authenticated user (expired valid) or unauthenticated user
 
 Actions:
 trip register(form)
@@ -62,36 +62,71 @@ class User (
 
 }
 
-enum class Role {
-    ADMIN,
-    VISITOR,
-    MEMBER,
-    CLIMBING_OFFICER;
+fun binaryToBitString(value:Int, width:Int = 16):String{
+    return value.toString(2).padStart(width,'0')
 
+}
+
+enum class Role(val bit:Int) {
+    VISITOR (1 shl 0),     //001
+    MEMBER (1 shl 1),      //010
+    EXECUTIVE (1 shl 2),   //100
+    ADMIN (1 shl 3),       //1000
+    CLIMBING_OFFICER (1 shl 4),    //10000
+    KAYAKING_OFFICER (1 shl 5),
+    BUSH_WALKING_OFFICER (1 shl 6),
+    SKIING_OFFICER (1 shl 7),
+    MOUNTAINEERING_OFFICER (1 shl 8),
+    CANYONING_OFFICER (1 shl 9),
+    GEAR_STORE (1 shl 10),
+    WALL_OFFICER (1 shl 11);
+
+    companion object{
+        fun getRolesFromBitmask(bitmask:Int):Set<Role>{
+            return entries.filter { (it.bit and bitmask) != 0 }.toSet()
+        }
+    }
+
+
+    fun getBinary():String{
+        return binaryToBitString(bit)
+    }
 
     fun rolePermission(): Set<Permission>{
         return when(this){
             ADMIN -> setOf(
-                TripRegistrationViewPermission,
-                TripRegistrationDeletePermission,
-                TripRegistrationEditPermission,
                 TripRegistrationCreatePermission,
+                TripRegistrationViewPermission,
+                TripRegistrationEditPermission,
+                TripRegistrationDeletePermission,
             )
             VISITOR -> setOf(
                 TripRegistrationViewPermission
             )
-            MEMBER -> setOf(
+            MEMBER, EXECUTIVE -> setOf(
+                TripRegistrationCreatePermission,
                 TripRegistrationViewPermission,
                 TripRegistrationEditPermission,
-                TripRegistrationCreatePermission,
             )
-
             CLIMBING_OFFICER -> setOf(
                 ApprovalClimbing,
             )
+            SKIING_OFFICER -> setOf(
+                ApprovalSkiing,
+            )
+            KAYAKING_OFFICER -> setOf(
+                ApprovalKayaking,
+            )
+
+            BUSH_WALKING_OFFICER -> setOf()
+            MOUNTAINEERING_OFFICER -> setOf()
+            CANYONING_OFFICER -> setOf()
+            GEAR_STORE -> setOf()
+            WALL_OFFICER -> setOf()
         }
     }
 }
+
 
 
 // Common Package
