@@ -19,7 +19,7 @@ class DefaultTokenService(
         .withIssuer(config.issuer)
         .build()
 
-    override fun getVerifier(): JWTVerifier{
+    override fun getVerifier(): JWTVerifier {
         return verifier
     }
 
