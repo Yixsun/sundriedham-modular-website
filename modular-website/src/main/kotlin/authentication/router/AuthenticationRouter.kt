@@ -66,6 +66,7 @@ class AuthenticationRouter(
                 NetworkResult.Failure(AuthenticateSignInError.UnknownError)
         }
     }
+
     //Log in
     suspend fun authenticate(request: LoginCredentialsRequest): NetworkResult<AuthenticationResponse, AuthenticationRequestError> {
         //read user from db
@@ -86,6 +87,7 @@ class AuthenticationRouter(
         //generate token response
         return NetworkResult.Success(createAuthenticationResponse(user))
     }
+
     //Refresh Token
     suspend fun authenticateRefresh(request: RefreshAuthenticationRequest): NetworkResult<AuthenticationResponse, AuthenticationRefreshError> {
         val token = request.refreshToken

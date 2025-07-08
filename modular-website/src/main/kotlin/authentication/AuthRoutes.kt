@@ -123,12 +123,19 @@ suspend fun RoutingCall.getUser(userRepository: UserRepository): User? {
         ?.get("userID")
         ?.let(UUID::fromString)
         ?.let(::Identifier)
-    if (userID == null) { return null }
+    if (userID == null) {
+        return null
+    }
     return userRepository.getUserByUserid(userID)
 }
 
 @KtorDsl
-fun Route.get(path: String, permission: String, userRepository: UserRepository, body: suspend RoutingContext.(User) -> Unit) {
+fun Route.get(
+    path: String,
+    permission: String,
+    userRepository: UserRepository,
+    body: suspend RoutingContext.(User) -> Unit
+) {
     get(path = path) {
         val user = call.getUser(userRepository)
         if (user == null) {
