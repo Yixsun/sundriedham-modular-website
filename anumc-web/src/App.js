@@ -1,5 +1,18 @@
+import ResponsiveDrawer from "./scenes/global/ResponsiveDrawer";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { ThemeProvider } from "@emotion/react";
+import theme from "./theme";
+
 function App() {
-  return <div className="App">blank app</div>;
+  return (
+    <ThemeProvider theme={theme}>
+      <BrowserRouter>
+        <div className="App">
+          <ResponsiveDrawer />
+        </div>
+      </BrowserRouter>
+    </ThemeProvider>
+  );
 }
 
 export default App;
